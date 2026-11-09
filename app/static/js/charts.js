@@ -1,4 +1,3 @@
-import "./ui-enhancements.js";
 import { $, request, toast } from "./api.js";
 let chart, candles, volume, average, resizeObserver;
 let loadSequence = 0;
