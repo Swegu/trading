@@ -18,7 +18,8 @@ services:
     networks: [markets-internal]
 
   markets:
-    build: .
+    image: ghcr.io/swegu/trading:market-tracker-postgres
+    pull_policy: always
     container_name: markets
     restart: unless-stopped
     depends_on:
