@@ -1,13 +1,41 @@
 services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: markets-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: markets
+      POSTGRES_USER: markets
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-markets-local-change-this}
+    volumes:
+      - markets_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U markets -d markets"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+    networks: [markets-internal]
+
   markets:
     build: .
     container_name: markets
     restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://markets:${POSTGRES_PASSWORD:-markets-local-change-this}@postgres:5432/markets
+      DATA_DIR: /data
     volumes:
       - ./data:/data
-    networks: [proxy]
+    ports:
+      - "${MARKETS_PORT:-8000}:8000"
+    networks: [markets-internal]
+
+volumes:
+  markets_postgres:
 
 networks:
-  proxy:
-    external: true
-    name: ${PROXY_NETWORK:-proxy}
+  markets-internal:
+    driver: bridge

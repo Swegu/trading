@@ -1,4 +1,5 @@
 fastapi
-uvicorn
+uvicorn[standard]
 yfinance
 pandas
+psycopg[binary,pool]>=3.2,<4

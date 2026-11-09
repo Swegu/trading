@@ -1,217 +1,124 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>Markets</title>
-<style>
-:root,[data-theme=dark]{--bg:#0e1621;--panel:#151f2e;--line:#243247;--tx:#e6edf5;--mu:#8a9bb0;--up:#2fbf9b;--dn:#f06a5f;--ne:#5f6b7b}
-[data-theme=light]{--bg:#f3f5f8;--panel:#fff;--line:#dde3ea;--tx:#14202e;--mu:#5d6b7d;--up:#0f9d77;--dn:#d9453a}
-*{box-sizing:border-box}html,body{height:100%;margin:0}
-body{background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;font-variant-numeric:tabular-nums;display:flex;flex-direction:column;padding-top:env(safe-area-inset-top)}
-header{display:flex;justify-content:space-between;align-items:center;padding:10px 16px;border-bottom:1px solid var(--line)}
-h1{font-size:17px;margin:0}h2{font-size:22px;margin:0}h3{margin:0;padding:14px 16px 6px;font-size:13px;color:var(--mu);font-weight:600}
-h4{margin:18px 0 4px;font-size:14px}
-button{font:inherit;color:var(--mu);background:none;border:1px solid transparent;border-radius:6px;padding:5px 11px;cursor:pointer}
-button:hover{color:var(--tx)}button.on{color:var(--tx);background:var(--panel);border-color:var(--line)}
-button:focus-visible,.row:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--up);outline-offset:1px}
-input,select{font:inherit;font-size:16px;color:var(--tx);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:8px 10px}
-#app{flex:1;min-height:0;display:grid;grid-template-columns:340px 1fr}
-#side{overflow:auto;border-right:1px solid var(--line);background:var(--panel)}
-#sb{padding:12px 16px;border-bottom:1px solid var(--line)}#sb input{width:100%}
-.addto{display:flex;gap:8px;align-items:center;margin-top:8px;color:var(--mu);font-size:13px}.addto select{flex:1;font-size:14px;padding:5px 8px}
-.hit{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 0}.hit small{display:block;color:var(--mu);font-size:12px}
-.hit button{border-color:var(--line);color:var(--tx)}
-section{min-width:0;min-height:0;flex-direction:column;padding:14px 16px;gap:10px}
-#chart,#heat{flex:1;min-height:0;position:relative}
-.row{display:grid;grid-template-columns:1fr auto 70px 24px;gap:10px;align-items:center;padding:9px 16px;cursor:pointer;border-left:3px solid transparent}
-.row:hover{background:var(--bg)}.row.on{background:var(--bg);border-left-color:var(--up)}
-.row small{display:block;color:var(--mu);font-size:12px}.row .up,.row .dn{text-align:right}
-.x{opacity:.4;padding:2px 6px;font-size:16px}.row:hover .x{opacity:1}
-.head{display:flex;justify-content:space-between;align-items:flex-end}.head small{color:var(--mu)}.px{text-align:right;font-size:20px}.px span{display:block;font-size:14px}
-.bar{display:flex;gap:4px;overflow-x:auto}
-.up{color:var(--up)}.dn{color:var(--dn)}
-.tile{position:absolute;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#fff;border-radius:3px;cursor:pointer;overflow:hidden;transition:filter .15s}
-.tile:hover{filter:brightness(1.15)}.tile span{font-size:.8em;opacity:.9}
-dialog{width:min(420px,calc(100% - 32px));max-height:90vh;color:var(--tx);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px 22px}
-dialog::backdrop{background:rgba(0,0,0,.5)}
-.f{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:6px 0}.f select,.f input{width:170px}
-.pri{color:#fff;background:var(--up)}.msg{color:var(--mu);font-size:13px;min-height:1.4em}
-.top{display:flex;justify-content:space-between;align-items:center}
-@media(min-width:800px){[data-v=list]{display:none}body[data-view=heat] #chartView,body:not([data-view=heat]) #heatView{display:none}section{display:flex}}
-@media(max-width:799px){
- #app{grid-template-columns:1fr;padding-bottom:calc(58px + env(safe-area-inset-bottom))}#app>*{display:none}
- body[data-view=list] #side{display:block;border:0}body[data-view=chart] #chartView,body[data-view=heat] #heatView{display:flex}
- nav{position:fixed;left:0;right:0;bottom:0;display:flex;justify-content:space-around;background:var(--panel);border-top:1px solid var(--line);padding:6px 0 calc(6px + env(safe-area-inset-bottom));z-index:5}
- nav button{flex:1;margin:0 6px;padding:10px}}
-</style></head>
-<body data-view="chart">
-<header><h1>Markets</h1><nav><button data-v="list">Watchlist</button><button data-v="chart">Chart</button><button data-v="heat">Heatmap</button></nav><button id="gear">Settings</button></header>
-<div id="app">
- <aside id="side">
-  <div id="sb">
-   <input id="q" type="search" placeholder="Search stocks, ETFs, futures, crypto" autocomplete="off">
-   <label class="addto">Add to <select id="addTo"></select></label>
-   <div id="res"></div>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101720">
+  <title>Markets — Market tracker</title>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net">
+  <link rel="stylesheet" href="/static/css/app.css">
+  <script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
+</head>
+<body data-theme="dark" data-style="hybrid" data-density="balanced" data-accent="mint">
+<div class="app-shell">
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="Markets home"><span class="brand-mark">M</span><span><b>markets</b><small>MARKET TRACKER</small></span></a>
+    <div class="nav-label">WORKSPACE</div>
+    <nav class="side-nav" aria-label="Main navigation">
+      <button class="nav-item active" data-view="overview"><span class="nav-icon">◫</span>Overview</button>
+      <button class="nav-item" data-view="chart"><span class="nav-icon">⌁</span>Chart</button>
+      <button class="nav-item" data-view="heat"><span class="nav-icon">▦</span>Heatmap</button>
+    </nav>
+    <div class="watch-heading"><span class="nav-label">YOUR WATCHLISTS</span><button id="new-group" class="icon-button" title="Create watchlist" aria-label="Create watchlist">＋</button></div>
+    <div id="watchlists" class="watchlists"><div class="skeleton-line"></div><div class="skeleton-line short"></div></div>
+    <div class="sidebar-footer"><span class="live-dot"></span><span>Market data via Yahoo Finance</span></div>
+  </aside>
+
+  <div class="main-column">
+    <header class="topbar">
+      <div class="mobile-brand"><span class="brand-mark">M</span><b>markets</b></div>
+      <div class="search-wrap">
+        <span class="search-icon">⌕</span>
+        <input id="search" type="search" placeholder="Search symbols, companies…" autocomplete="off" aria-label="Search markets">
+        <kbd>⌘ K</kbd>
+        <div id="search-results" class="search-results" hidden></div>
+      </div>
+      <div class="top-actions">
+        <span class="market-status"><i></i> MARKET TRACKER</span>
+        <button id="settings-open" class="avatar-button" aria-label="Open settings" title="Settings">⚙</button>
+      </div>
+    </header>
+
+    <main id="main-content">
+      <section id="view-overview" class="view active">
+        <div class="page-heading">
+          <div><div class="eyebrow">YOUR PERSONAL MARKET DESK</div><h1>Market overview</h1><p class="subheading">A clear view of the markets you're following.</p></div>
+          <div class="heading-meta"><span class="data-dot"></span><span id="last-updated">Waiting for market data</span></div>
+        </div>
+        <div id="summary-cards" class="summary-grid">
+          <article class="summary-card"><span class="card-label">WATCHLIST ASSETS</span><strong>—</strong><small>Across your lists</small></article>
+          <article class="summary-card"><span class="card-label">GAINING</span><strong>—</strong><small>Positive daily change</small></article>
+          <article class="summary-card"><span class="card-label">DECLINING</span><strong>—</strong><small>Negative daily change</small></article>
+          <article class="summary-card"><span class="card-label">WATCHLISTS</span><strong>—</strong><small>Your collections</small></article>
+        </div>
+        <div class="overview-grid">
+          <section class="panel overview-watch">
+            <div class="panel-heading"><div><h2>Market watch</h2><p>Your tracked assets at a glance</p></div><button class="text-button" data-go="chart">Open charts <span>↗</span></button></div>
+            <div id="overview-table" class="market-table"><div class="empty-state">Loading your watchlist…</div></div>
+          </section>
+          <section class="panel movers-panel">
+            <div class="panel-heading"><div><h2>Top movers</h2><p>Within your watchlists</p></div></div>
+            <div id="movers" class="movers-list"><div class="empty-state">Waiting for quotes…</div></div>
+          </section>
+        </div>
+        <div class="panel quick-heat">
+          <div class="panel-heading"><div><h2>Market heatmap</h2><p>Performance of your tracked assets</p></div><button class="text-button" data-go="heat">Explore heatmap <span>↗</span></button></div>
+          <div id="overview-heat" class="mini-heat"></div>
+        </div>
+        <p class="disclaimer">Market data is provided by Yahoo Finance and may be delayed. This dashboard is for market monitoring and informational purposes only.</p>
+      </section>
+
+      <section id="view-chart" class="view">
+        <div class="page-heading chart-heading">
+          <div><div class="eyebrow">ASSET ANALYSIS</div><h1 id="chart-symbol">Select an asset</h1><p id="chart-name" class="subheading">Choose an instrument from your watchlists or search above.</p></div>
+          <div class="quote-block"><strong id="chart-price">—</strong><span id="chart-change" class="muted">—</span></div>
+        </div>
+        <div class="panel chart-panel">
+          <div class="chart-toolbar"><div id="range-controls" class="segmented"><button data-range="1D">1D</button><button data-range="5D">5D</button><button data-range="1M">1M</button><button data-range="6M">6M</button><button data-range="1Y" class="selected">1Y</button><button data-range="5Y">5Y</button><button data-range="MAX">MAX</button></div><div class="chart-tools"><label class="inline-select">SMA <select id="chart-sma"><option value="0">Off</option><option value="20">20</option><option value="50" selected>50</option><option value="200">200</option></select></label><button id="chart-fullscreen" class="icon-button" title="Fullscreen chart">⛶</button></div></div>
+          <div id="chart-loading" class="chart-loading" hidden>Loading chart data…</div>
+          <div id="price-chart" class="price-chart"><div class="chart-empty">Select an asset to load its price history.</div></div>
+          <div class="chart-footer"><span id="chart-source">Source: Yahoo Finance</span><span id="chart-updated">Data timestamp unavailable</span></div>
+        </div>
+        <div class="panel chart-info"><div><span class="card-label">SELECTED ASSET</span><strong id="selected-name">—</strong></div><div><span class="card-label">SYMBOL</span><strong id="selected-symbol">—</strong></div><div><span class="card-label">DAILY CHANGE</span><strong id="selected-change">—</strong></div></div>
+      </section>
+
+      <section id="view-heat" class="view">
+        <div class="page-heading"><div><div class="eyebrow">VISUAL MARKET SCAN</div><h1>Market heatmap</h1><p class="subheading">See which assets are moving across your selected watchlist.</p></div></div>
+        <div class="panel heat-panel"><div class="panel-heading"><div><h2>Watchlist performance</h2><p id="heat-caption">Choose a watchlist below</p></div><label class="inline-select">Scale <select id="heat-scale"><option value="1">±1%</option><option value="2">±2%</option><option value="3" selected>±3%</option><option value="5">±5%</option><option value="10">±10%</option></select></label></div><div id="heat-groups" class="segmented group-tabs"></div><div id="full-heat" class="full-heat"><div class="chart-empty">Your heatmap will appear when quotes are available.</div></div></div>
+      </section>
+    </main>
+    <nav class="mobile-nav" aria-label="Mobile navigation"><button data-view="overview" class="active">Overview</button><button data-view="chart">Chart</button><button data-view="heat">Heatmap</button></nav>
   </div>
-  <div id="list"></div>
- </aside>
- <section id="chartView">
-  <div class="head"><div><h2 id="sym"></h2><small id="nm"></small></div><div class="px"><b id="px"></b><span id="chg"></span></div></div>
-  <div class="bar" id="ranges"></div><div id="chart"></div>
- </section>
- <section id="heatView"><div class="bar" id="groups"></div><div id="heat"></div></section>
 </div>
-<dialog id="dlg">
- <div class="top"><h2>Settings</h2><button id="close">Close</button></div>
- <h4>Account</h4>
- <div class="f"><span>Signed in as <b id="who"></b></span><button id="logout">Log out</button></div>
- <h4>Appearance</h4>
- <div class="f"><label for="s-theme">Theme</label><select id="s-theme" data-set="theme"><option value="auto">Match device</option><option value="dark">Dark</option><option value="light">Light</option></select></div>
- <div class="f"><label for="s-heat">Heatmap color scale</label><select id="s-heat" data-set="heat"><option value="1">&plusmn;1%</option><option value="2">&plusmn;2%</option><option value="3">&plusmn;3%</option><option value="5">&plusmn;5%</option><option value="10">&plusmn;10%</option></select></div>
- <h4>Chart</h4>
- <div class="f"><label for="s-range">Default range</label><select id="s-range" data-set="range"><option>1D</option><option>5D</option><option>1M</option><option>6M</option><option>1Y</option><option>5Y</option><option>MAX</option></select></div>
- <div class="f"><label for="s-sma">Moving average</label><select id="s-sma" data-set="sma"><option value="0">Off</option><option value="20">20 periods</option><option value="50">50 periods</option><option value="200">200 periods</option></select></div>
- <div class="f"><label for="s-refresh">Refresh prices every</label><select id="s-refresh" data-set="refresh"><option value="30">30 seconds</option><option value="60">1 minute</option><option value="120">2 minutes</option><option value="300">5 minutes</option></select></div>
- <h4>Change password</h4>
- <div class="f"><label for="pc">Current</label><input id="pc" type="password" autocomplete="current-password"></div>
- <div class="f"><label for="pn">New (8+ characters)</label><input id="pn" type="password" autocomplete="new-password"></div>
- <div class="f"><span class="msg" id="pm" role="status"></span><button id="pw" class="pri">Change password</button></div>
- <div id="adm" hidden>
-  <h4>Users</h4>
-  <div id="ulist"></div>
-  <div class="f"><label for="nu">Username</label><input id="nu" autocapitalize="none" autocomplete="off"></div>
-  <div class="f"><label for="np">Password (8+ characters)</label><input id="np" type="password" autocomplete="new-password"></div>
-  <div class="f"><span class="msg" id="um" role="status"></span><button id="addu" class="pri">Add user</button></div>
- </div>
+
+<dialog id="settings-dialog" class="modal">
+  <form method="dialog" class="modal-head"><div><div class="eyebrow">PERSONALIZE YOUR WORKSPACE</div><h2>Settings</h2></div><button class="icon-button" value="close" aria-label="Close settings">×</button></form>
+  <div class="modal-content">
+    <section class="settings-section"><h3>Appearance</h3>
+      <label class="setting-row"><span><b>Visual style</b><small>Choose how Markets looks</small></span><select data-setting="style"><option value="hybrid">Hybrid</option><option value="terminal">Terminal</option><option value="premium">Premium fintech</option><option value="minimal">Minimal</option></select></label>
+      <label class="setting-row"><span><b>Color mode</b><small>Dark, light or follow device</small></span><select data-setting="theme"><option value="auto">System</option><option value="dark">Dark</option><option value="light">Light</option></select></label>
+      <label class="setting-row"><span><b>Information density</b><small>Adjust spacing and table rows</small></span><select data-setting="density"><option value="balanced">Balanced</option><option value="compact">Compact</option><option value="comfortable">Comfortable</option></select></label>
+      <label class="setting-row"><span><b>Accent color</b><small>Highlight and selection color</small></span><select data-setting="accent"><option value="mint">Mint</option><option value="blue">Blue</option><option value="violet">Violet</option><option value="amber">Amber</option></select></label>
+    </section>
+    <section class="settings-section"><h3>Market display</h3>
+      <label class="setting-row"><span><b>Default chart range</b><small>Initial range when opening an asset</small></span><select data-setting="range"><option>1D</option><option>5D</option><option>1M</option><option>6M</option><option>1Y</option><option>5Y</option><option>MAX</option></select></label>
+      <label class="setting-row"><span><b>Moving average</b><small>Simple moving average on charts</small></span><select data-setting="sma"><option value="0">Off</option><option value="20">20 periods</option><option value="50">50 periods</option><option value="200">200 periods</option></select></label>
+      <label class="setting-row"><span><b>Price refresh</b><small>How often watchlist quotes refresh</small></span><select data-setting="refresh"><option value="30">30 seconds</option><option value="60">1 minute</option><option value="120">2 minutes</option><option value="300">5 minutes</option></select></label>
+      <label class="setting-row"><span><b>Heatmap scale</b><small>Color intensity range</small></span><select data-setting="heat"><option value="1">±1%</option><option value="2">±2%</option><option value="3">±3%</option><option value="5">±5%</option><option value="10">±10%</option></select></label>
+    </section>
+    <section class="settings-section"><h3>Account</h3><div class="account-row"><span>Signed in as <b id="account-name">—</b></span><button id="logout" class="secondary-button" type="button">Sign out</button></div>
+      <details class="password-details"><summary>Change password</summary><div class="form-stack"><input id="current-password" type="password" placeholder="Current password" autocomplete="current-password"><input id="new-password" type="password" placeholder="New password (8+ characters)" autocomplete="new-password"><button id="password-change" class="primary-button" type="button">Update password</button><span id="password-message" class="form-message" role="status"></span></div></details>
+      <div id="admin-panel" hidden><h3>Users</h3><div id="user-list"></div><div class="admin-add"><input id="new-username" placeholder="Username"><input id="new-user-password" type="password" placeholder="Password (8+ characters)"><button id="user-add" class="primary-button" type="button">Add user</button></div><span id="user-message" class="form-message" role="status"></span></div>
+    </section>
+  </div>
+  <div class="modal-foot"><span class="muted">Your preferences are saved automatically.</span><button class="primary-button" value="close">Done</button></div>
 </dialog>
-<script src="https://cdn.jsdelivr.net/npm/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/d3@7.9.0/dist/d3.min.js"></script>
-<script>
-const $=s=>document.querySelector(s),css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>'&#'+c.charCodeAt(0)+';');
-const fmt=(v,d=2)=>v.toLocaleString(undefined,{minimumFractionDigits:d,maximumFractionDigits:d});
-const pr=v=>fmt(v,v<1?4:2),pct=v=>`<span class="${v>=0?'up':'dn'}">${v>=0?'+':''}${fmt(v)}%</span>`;
-const RANGES=['1D','5D','1M','6M','1Y','5Y','MAX'];
-const J=(m,b)=>({method:m,headers:{'Content-Type':'application/json'},body:JSON.stringify(b)});
-async function api(u,o){const r=await fetch(u,o);if(r.status===401){location.href='/login';throw new Error('auth')}return r}
-let S={},groups=[],sel=null,range='1Y',gi=0,target='',chart,candle,vol,sma,rt,timer,isAdmin=false;
-const find=s=>groups.flatMap(g=>g.items).find(i=>i.symbol===s);
 
-async function users(){
- const r=await api('/api/users');if(!r.ok)return;
- $('#ulist').innerHTML=(await r.json()).map(x=>`<div class="f"><span>${esc(x.name)}${x.admin?' (admin)':''}</span>${x.admin?'':`<button data-du="${esc(x.name)}">Remove</button>`}</div>`).join('');
-}
-$('#ulist').onclick=async e=>{
- const n=e.target.dataset.du;
- if(n&&confirm(`Remove ${n} and their watchlist?`)){await api('/api/users/'+encodeURIComponent(n),{method:'DELETE'});users()}
-};
-$('#addu').onclick=async()=>{
- const r=await api('/api/users',J('POST',{username:$('#nu').value,password:$('#np').value}));
- $('#um').textContent=r.ok?'User added.':String((await r.json()).detail);
- if(r.ok){$('#nu').value=$('#np').value='';users()}
-};
-function applyTheme(){
- document.documentElement.dataset.theme=S.theme==='auto'?(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark'):S.theme;
- if(!chart)return;
- chart.applyOptions({layout:{textColor:css('--mu')},grid:{vertLines:{color:css('--line')},horzLines:{color:css('--line')}},rightPriceScale:{borderColor:css('--line')},timeScale:{borderColor:css('--line')}});
- candle.applyOptions({upColor:css('--up'),downColor:css('--dn'),wickUpColor:css('--up'),wickDownColor:css('--dn')});
- load();drawHeat();
-}
-function setView(v){document.body.dataset.view=v;document.querySelectorAll('nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));if(v==='heat')drawHeat()}
-function bar(el,names,cur,fn){el.innerHTML=names.map((n,i)=>`<button class="${cur(n,i)?'on':''}" data-k="${i}">${esc(n)}</button>`).join('');el.onclick=e=>{const k=e.target.dataset.k;if(k!==undefined){fn(+k);bar(el,names,cur,fn)}}}
-const rangeBar=()=>bar($('#ranges'),RANGES,n=>n===range,i=>{range=RANGES[i];load()});
-function fillTargets(){
- if(!target)target=groups[0]?groups[0].name:'Stocks';
- const names=[...new Set([...groups.map(g=>g.name),target])];
- $('#addTo').innerHTML=names.map(n=>`<option${n===target?' selected':''}>${esc(n)}</option>`).join('')+'<option value="__new">New group...</option>';
-}
-function renderList(){
- $('#list').innerHTML=groups.length?groups.map(g=>`<h3>${esc(g.name)}</h3>`+g.items.map(i=>`<div class="row${sel&&sel.symbol===i.symbol?' on':''}" tabindex="0" data-s="${i.symbol}"><span><b>${i.symbol}</b><small>${esc(i.name)}</small></span><span>${pr(i.price)}</span>${pct(i.pct)}<button class="x" data-del="${i.symbol}" aria-label="Remove ${i.symbol}">\u00d7</button></div>`).join('')).join(''):'<h3>Your watchlist is empty. Search above to add symbols.</h3>';
- bar($('#groups'),groups.map(g=>g.name),(n,i)=>i===gi,i=>{gi=i;drawHeat()});
- fillTargets();
-}
-function head(){$('#sym').textContent=sel?sel.symbol:'';$('#nm').textContent=sel?sel.name:'Nothing to show yet. Search to add a symbol.';$('#px').textContent=sel?pr(sel.price):'';$('#chg').innerHTML=sel?pct(sel.pct):''}
-function initChart(){
- chart=LightweightCharts.createChart($('#chart'),{autoSize:true,layout:{background:{color:'transparent'},textColor:css('--mu'),fontSize:12},grid:{vertLines:{color:css('--line')},horzLines:{color:css('--line')}},rightPriceScale:{borderColor:css('--line')},timeScale:{borderColor:css('--line'),timeVisible:true}});
- candle=chart.addCandlestickSeries({upColor:css('--up'),downColor:css('--dn'),borderVisible:false,wickUpColor:css('--up'),wickDownColor:css('--dn')});
- vol=chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'v'});chart.priceScale('v').applyOptions({scaleMargins:{top:.82,bottom:0}});
- sma=chart.addLineSeries({color:'#e0b050',lineWidth:1,priceLineVisible:false,lastValueVisible:false});
- rangeBar();
-}
-async function load(){
- if(!sel){[candle,vol,sma].forEach(s=>s.setData([]));return}
- const r=await api(`/api/history?symbol=${encodeURIComponent(sel.symbol)}&range=${range}`);
- const d=r.ok?await r.json():[];
- candle.setData(d.map(({time,open,high,low,close})=>({time,open,high,low,close})));
- vol.setData(d.map(x=>({time:x.time,value:x.volume,color:css(x.close>=x.open?'--up':'--dn')+'55'})));
- const P=+S.sma,m=[];let s=0;
- if(P)d.forEach((x,i)=>{s+=x.close;if(i>=P)s-=d[i-P].close;if(i>=P-1)m.push({time:x.time,value:s/P})});
- sma.setData(m);chart.timeScale().fitContent();
-}
-function pick(s){sel=find(s);head();renderList();setView('chart');load()}
-function drawHeat(){
- const g=groups[gi],el=$('#heat');if(!g||!el.clientWidth)return;
- const eq=!g.items.every(i=>i.w),H=+S.heat;
- const root=d3.hierarchy({children:g.items.map(i=>({...i,v:eq?1:i.w}))}).sum(d=>d.v||0);
- d3.treemap().size([el.clientWidth,el.clientHeight]).paddingInner(2).round(true)(root);
- const col=d3.scaleLinear().domain([-H,0,H]).range([css('--dn'),css('--ne'),css('--up')]).clamp(true);
- el.innerHTML=root.leaves().map(l=>{const i=l.data,w=l.x1-l.x0,h=l.y1-l.y0;
-  return `<div class="tile" data-s="${i.symbol}" style="left:${l.x0}px;top:${l.y0}px;width:${w}px;height:${h}px;background:${col(i.pct)};font-size:${Math.max(10,Math.min(22,w/6))}px">${w>44&&h>30?`<b>${i.symbol}</b><span>${i.pct>=0?'+':''}${fmt(i.pct)}%</span>`:''}</div>`}).join('');
-}
-async function refresh(){
- try{const r=await api('/api/markets');if(!r.ok)throw 0;groups=await r.json()}
- catch(e){if(e&&e.message==='auth')return;$('#list').innerHTML='<h3>Can\u2019t reach the data source. Check the server logs.</h3>';return}
- const prev=sel&&sel.symbol;
- gi=Math.max(0,Math.min(gi,groups.length-1));
- sel=find(prev)||groups.flatMap(g=>g.items)[0];
- renderList();head();if(document.body.dataset.view==='heat')drawHeat();
- if((sel&&sel.symbol)!==prev)load();
-}
-const schedule=()=>{clearTimeout(rt);rt=setTimeout(async()=>{await refresh();schedule()},S.refresh*1000)};
-async function add(sym,nm){
- const r=await api('/api/watchlist',J('POST',{group:$('#addTo').value,symbol:sym,name:nm}));
- if(!r.ok){alert((await r.json()).detail||'Could not add');return}
- await refresh();const s=sym.toUpperCase();
- if(!find(s)){await del(s);alert(`No price data for ${s}, so it was not added.`);return}
- $('#q').value='';$('#res').innerHTML='';pick(s);
-}
-async function del(s){await api('/api/watchlist/'+encodeURIComponent(s),{method:'DELETE'});await refresh()}
-async function search(){
- const q=$('#q').value.trim();if(q.length<2){$('#res').innerHTML='';return}
- const r=await (await api('/api/search?q='+encodeURIComponent(q))).json();
- if(q!==$('#q').value.trim())return;
- $('#res').innerHTML=r.length?r.map(x=>{const have=find(x.symbol.toUpperCase());return `<div class="hit"><span><b>${esc(x.symbol)}</b><small>${esc(x.name)}${x.type?', '+esc(x.type.toLowerCase()):''}${x.exch?' on '+esc(x.exch):''}</small></span><button data-add="${esc(x.symbol)}" data-nm="${esc(x.name)}"${have?' disabled':''}>${have?'Added':'Add'}</button></div>`}).join(''):'<h3>No matches</h3>';
-}
-$('#q').oninput=()=>{clearTimeout(timer);timer=setTimeout(search,300)};
-$('#addTo').onchange=e=>{target=e.target.value==='__new'?((prompt('New group name')||'').trim().slice(0,30)||target):e.target.value;fillTargets()};
-document.addEventListener('click',e=>{
- const d=e.target.closest('[data-del]');if(d){del(d.dataset.del);return}
- const a=e.target.closest('[data-add]');if(a){add(a.dataset.add,a.dataset.nm);return}
- const t=e.target.closest('[data-s]');if(t)pick(t.dataset.s)});
-document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target.dataset.s)pick(e.target.dataset.s)});
-document.querySelector('nav').onclick=e=>{if(e.target.dataset.v)setView(e.target.dataset.v)};
+<dialog id="group-dialog" class="modal small-modal">
+  <form id="group-form"><div class="eyebrow">WATCHLISTS</div><h2>Create watchlist</h2><p class="subheading">Give your new collection a name.</p><input id="group-name" maxlength="30" placeholder="e.g. Long-term ideas" required><div class="dialog-actions"><button type="button" class="secondary-button" data-close-group>Cancel</button><button class="primary-button">Create</button></div></form>
+</dialog>
 
-$('#gear').onclick=()=>{document.querySelectorAll('[data-set]').forEach(el=>el.value=S[el.dataset.set]);$('#pm').textContent='';$('#dlg').showModal();if(isAdmin)users()};
-$('#close').onclick=()=>$('#dlg').close();
-$('#logout').onclick=async()=>{await fetch('/api/logout',{method:'POST'});location.href='/login'};
-document.querySelectorAll('[data-set]').forEach(el=>el.onchange=async()=>{
- const k=el.dataset.set;S[k]=isNaN(el.value)?el.value:+el.value;
- await api('/api/settings',J('PUT',{[k]:S[k]}));
- if(k==='theme')applyTheme();
- if(k==='range'){range=S.range;rangeBar();load()}
- if(k==='sma')load();
- if(k==='heat')drawHeat();
- if(k==='refresh')schedule();
-});
-$('#pw').onclick=async()=>{
- const r=await api('/api/password',J('POST',{current:$('#pc').value,new:$('#pn').value}));
- $('#pm').textContent=r.ok?'Password changed.':String((await r.json()).detail);
- if(r.ok)$('#pc').value=$('#pn').value='';
-};
-matchMedia('(prefers-color-scheme: light)').onchange=()=>{if(S.theme==='auto')applyTheme()};
-new ResizeObserver(drawHeat).observe($('#heat'));
-(async()=>{
- const m=await (await api('/api/me')).json();
- S=m.settings;range=S.range;$('#who').textContent=m.user;isAdmin=m.admin;$('#adm').hidden=!m.admin;
- applyTheme();initChart();await refresh();setView('chart');schedule();
-})();
-</script></body></html>
+<div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+<script type="module" src="/static/js/app.js"></script>
+</body></html>
