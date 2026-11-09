@@ -224,7 +224,7 @@ async function saveSetting(key, rawValue) {
     const response = await request("/api/settings", jsonRequest("PUT", { [key]: value }));
     if (!response.ok) throw new Error("Could not save this preference.");
     settings = await response.json(); applyAppearance();
-    if (key === "range") { currentRange = settings.range; $$("#range-controls button").forEach(button => button.classList.toggle("selected", button.dataset.range === currentRange)); if (selected) loadChart(selected.symbol, currentRange, settings.sma); }
+    if (key === "range") { currentRange = settings.range; $$$("#range-controls button").forEach(button => button.classList.toggle("selected", button.dataset.range === currentRange)); if (selected) loadChart(selected.symbol, currentRange, settings.sma); }
     if (key === "sma" && selected) loadChart(selected.symbol, currentRange, settings.sma);
     if (key === "heat") drawHeatmaps();
     if (key === "refresh") scheduleRefresh();
@@ -316,7 +316,7 @@ function bindEvents() {
   $("#range-controls").addEventListener("click", event => {
     const button = event.target.closest("[data-range]"); if (!button) return;
     currentRange = button.dataset.range;
-    $("#range-controls button").forEach(item => item.classList.toggle("selected", item === button));
+    $$("#range-controls button").forEach(item => item.classList.toggle("selected", item === button));
     saveSetting("range", currentRange);
   });
   $("#chart-sma").addEventListener("change", event => saveSetting("sma", event.target.value));
@@ -337,7 +337,7 @@ async function init() {
     $("#account-name").textContent = me.user; $("#account-name").dataset.name = me.user;
     $("#admin-panel").hidden = !isAdmin;
     currentRange = settings.range || "1Y";
-    $("#range-controls button").forEach(button => button.classList.toggle("selected", button.dataset.range === currentRange));
+    $$("#range-controls button").forEach(button => button.classList.toggle("selected", button.dataset.range === currentRange));
     $("#chart-sma").value = String(settings.sma ?? 50);
     $("#heat-scale").value = String(settings.heat ?? 3);
     applyAppearance(); createChart();
