@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Sign in</title>
+<style>
+:root{--bg:#0e1621;--panel:#151f2e;--line:#243247;--tx:#e6edf5;--mu:#8a9bb0;--up:#2fbf9b;--dn:#f06a5f}
+@media(prefers-color-scheme:light){:root{--bg:#f3f5f8;--panel:#fff;--line:#dde3ea;--tx:#14202e;--mu:#5d6b7d;--up:#0f9d77;--dn:#d9453a}}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;display:grid;place-items:center;background:var(--bg);color:var(--tx);font:15px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif}
+form{width:min(360px,calc(100% - 32px));background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:28px;display:grid;gap:14px}
+h1{margin:0 0 4px;font-size:22px}label{display:grid;gap:5px;color:var(--mu);font-size:13px}
+input{font:inherit;font-size:16px;color:var(--tx);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:10px 12px}
+button{font:inherit;font-weight:600;color:#fff;background:var(--up);border:0;border-radius:6px;padding:11px;cursor:pointer}
+button:disabled{opacity:.6}input:focus-visible,button:focus-visible{outline:2px solid var(--up);outline-offset:2px}
+#err{color:var(--dn);min-height:1.4em;font-size:14px}
+</style></head><body>
+<form id="f">
+ <h1>Markets</h1>
+ <label>Username<input id="u" autocomplete="username" autocapitalize="none" required autofocus></label>
+ <label>Password<input id="p" type="password" autocomplete="current-password" required></label>
+ <div id="err" role="alert"></div>
+ <button id="go">Sign in</button>
+</form>
+<script>
+const $=s=>document.querySelector(s);
+$('#f').onsubmit=async e=>{
+ e.preventDefault();$('#go').disabled=true;$('#err').textContent='';
+ const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:$('#u').value,password:$('#p').value})});
+ if(r.ok){location.href='/';return}
+ $('#err').textContent=(await r.json()).detail||'Sign in failed.';$('#go').disabled=false;$('#p').select();
+};
+</script></body></html>

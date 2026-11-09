@@ -1,0 +1,23 @@
+{"groups": [
+ {"name": "Indices", "items": [
+  {"symbol": "^GSPC", "name": "S&P 500"}, {"symbol": "^IXIC", "name": "Nasdaq Composite"},
+  {"symbol": "^DJI", "name": "Dow Jones"}, {"symbol": "^GDAXI", "name": "DAX"},
+  {"symbol": "^FTSE", "name": "FTSE 100"}, {"symbol": "^N225", "name": "Nikkei 225"}]},
+ {"name": "Stocks", "sizeByCap": true, "items": [
+  {"symbol": "AAPL", "name": "Apple"}, {"symbol": "MSFT", "name": "Microsoft"},
+  {"symbol": "NVDA", "name": "Nvidia"}, {"symbol": "GOOGL", "name": "Alphabet"},
+  {"symbol": "AMZN", "name": "Amazon"}, {"symbol": "META", "name": "Meta"},
+  {"symbol": "TSLA", "name": "Tesla"}, {"symbol": "AVGO", "name": "Broadcom"},
+  {"symbol": "JPM", "name": "JPMorgan"}, {"symbol": "V", "name": "Visa"},
+  {"symbol": "LLY", "name": "Eli Lilly"}, {"symbol": "WMT", "name": "Walmart"},
+  {"symbol": "XOM", "name": "Exxon Mobil"}, {"symbol": "ASML", "name": "ASML"}]},
+ {"name": "Commodities", "items": [
+  {"symbol": "CL=F", "name": "WTI crude"}, {"symbol": "BZ=F", "name": "Brent crude"},
+  {"symbol": "NG=F", "name": "Natural gas"}, {"symbol": "GC=F", "name": "Gold"},
+  {"symbol": "SI=F", "name": "Silver"}, {"symbol": "HG=F", "name": "Copper"},
+  {"symbol": "ZW=F", "name": "Wheat"}, {"symbol": "ZC=F", "name": "Corn"},
+  {"symbol": "KC=F", "name": "Coffee"}, {"symbol": "ZS=F", "name": "Soybeans"}]},
+ {"name": "Crypto", "items": [
+  {"symbol": "BTC-USD", "name": "Bitcoin"}, {"symbol": "ETH-USD", "name": "Ethereum"},
+  {"symbol": "SOL-USD", "name": "Solana"}, {"symbol": "XRP-USD", "name": "XRP"}]}
+]}
