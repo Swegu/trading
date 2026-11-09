@@ -33,7 +33,7 @@ function applyAppearance() {
 }
 function setView(name) {
   $$(".view").forEach(view => view.classList.toggle("active", view.id === "view-" + name));
-  $(".nav-item,.mobile-nav [data-view]").forEach(button => button.classList.toggle("active", button.dataset.view === name));
+  $$(".nav-item,.mobile-nav [data-view]").forEach(button => button.classList.toggle("active", button.dataset.view === name));
   if (name === "heat") drawHeatmaps();
 }
 function renderWatchlists() {
