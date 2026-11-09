@@ -8,7 +8,7 @@ export function escapeHtml(value) {
 }
 export async function request(url, options) {
   const response = await fetch(url, options);
-  if (response.status === 401) {
+  if (response.status === 401 && location.pathname !== "/login") {
     location.href = "/login";
     throw new Error("Your session has expired.");
   }

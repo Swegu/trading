@@ -112,11 +112,16 @@
       <div id="admin-panel" hidden><h3>Users</h3><div id="user-list"></div><div class="admin-add"><input id="new-username" placeholder="Username"><input id="new-user-password" type="password" placeholder="Password (8+ characters)"><button id="user-add" class="primary-button" type="button">Add user</button></div><span id="user-message" class="form-message" role="status"></span></div>
     </section>
   </div>
-  <div class="modal-foot"><span class="muted">Your preferences are saved automatically.</span><button class="primary-button" value="close">Done</button></div>
+  <form method="dialog" class="modal-foot"><span class="muted">Your preferences are saved automatically.</span><button class="primary-button">Done</button></form>
 </dialog>
 
 <dialog id="group-dialog" class="modal small-modal">
   <form id="group-form"><div class="eyebrow">WATCHLISTS</div><h2>Create watchlist</h2><p class="subheading">Give your new collection a name.</p><input id="group-name" maxlength="30" placeholder="e.g. Long-term ideas" required><div class="dialog-actions"><button type="button" class="secondary-button" data-close-group>Cancel</button><button class="primary-button">Create</button></div></form>
+</dialog>
+
+<dialog id="confirm-dialog" class="modal small-modal">
+  <div class="eyebrow">PLEASE CONFIRM</div><h2>Are you sure?</h2><p id="confirm-message" class="subheading">This action cannot be undone.</p>
+  <div class="dialog-actions"><button id="confirm-cancel" class="secondary-button" type="button">Cancel</button><button id="confirm-accept" class="primary-button" type="button">Continue</button></div>
 </dialog>
 
 <div id="toast-region" class="toast-region" aria-live="polite" aria-atomic="true"></div>

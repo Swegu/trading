@@ -6,31 +6,34 @@ Market data is provided by Yahoo Finance through yfinance. Quotes may be delayed
 
 ## Docker Compose deployment (no Git required on the server)
 
-Create a folder on your Docker host, save the repository's \`docker-compose.yml\` in that folder, and start it:
+Create a folder on your Docker host, save the repository's `docker-compose.yml` and `.env.example` in it, then:
 
+    cp .env.example .env      # set POSTGRES_PASSWORD to a long random secret
     docker compose up -d
 
 Docker pulls the prebuilt Markets image from GitHub Container Registry and the official PostgreSQL image. It does not clone the source repository or build the application on your server.
 
-Open http://YOUR-SERVER-IP:8000. On first launch, the login page guides you through creating the first administrator account.
+Open http://YOUR-SERVER-IP:8000. On first launch, the login page guides you through creating the first administrator account. Change the published port with `MARKETS_PORT` in `.env`.
 
-The default published port is 8000. Change it in the Compose file by changing \`8000:8000\` to your preferred host port.
-
-### First-run configuration
-
-Before the first start, replace \`replace-this-with-a-long-random-password\` in both places in the Compose file with the same long random password. Keep the value unchanged after PostgreSQL has initialized its data volume.
+The password is required: Compose refuses to start without it. Keep it unchanged after PostgreSQL has initialised its data volume.
 
 ### Persistent data
 
-- PostgreSQL data is stored in the named Docker volume \`markets_postgres\`.
-- Application data and the session signing key are stored in the named Docker volume \`markets_data\`.
+- PostgreSQL data is stored in the named Docker volume `markets_postgres`.
+- The session signing key (and a legacy `app.db`, if you are migrating from the SQLite version) live in `./data` next to the compose file.
 - The database is not published to the host; it is accessible only on the private Compose network.
-- Back up both named volumes.
+- Back up the `markets_postgres` volume and `./data`.
 
 For updates, use:
 
     docker compose pull
     docker compose up -d
+
+User management from the command line:
+
+    docker compose exec markets python manage.py list
+    docker compose exec markets python manage.py add NAME
+    docker compose exec markets python manage.py passwd NAME
 
 Useful commands:
 
@@ -38,7 +41,7 @@ Useful commands:
     docker compose logs -f postgres
     docker compose down
 
-\`docker compose down\` preserves named volumes. Do not use \`docker compose down -v\` unless you intend to delete the application data and PostgreSQL database.
+`docker compose down` preserves named volumes. Do not use `docker compose down -v` unless you intend to delete the application data and PostgreSQL database.
 
 ## Reverse proxy
 
@@ -50,7 +53,7 @@ Example Caddy site:
         reverse_proxy YOUR-SERVER-LAN-IP:8000
     }
 
-Forward the \`X-Forwarded-Proto: https\` header so secure session cookies are enabled behind HTTPS.
+Forward the `X-Forwarded-Proto: https` header so secure session cookies are enabled behind HTTPS.
 
 ## Features
 

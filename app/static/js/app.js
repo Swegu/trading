@@ -165,7 +165,7 @@ async function refreshPrices() {
 function scheduleRefresh() {
   clearTimeout(refreshTimer);
   refreshTimer = setTimeout(async () => {
-    await refreshPrices();
+    if (!document.hidden) await refreshPrices();
     scheduleRefresh();
   }, Number(settings.refresh || 60) * 1000);
 }
@@ -217,18 +217,26 @@ async function runSearch() {
     $("#search-results").hidden = false;
   } catch (error) { if (error.message !== "Your session has expired.") toast(error.message, "error"); }
 }
+function changeRange(range) {
+  currentRange = range;
+  $$("#range-controls button").forEach(button => button.classList.toggle("selected", button.dataset.range === range));
+  if (selected) loadChart(selected.symbol, currentRange, settings.sma);
+}
+function syncControls() {
+  $("#chart-sma").value = String(settings.sma);
+  $("#heat-scale").value = String(settings.heat);
+  $$("[data-setting]").forEach(input => input.value = settings[input.dataset.setting]);
+}
 async function saveSetting(key, rawValue) {
-  const numeric = ["refresh", "sma", "heat"].includes(key);
-  const value = numeric ? Number(rawValue) : rawValue;
+  const value = ["refresh", "sma", "heat"].includes(key) ? Number(rawValue) : rawValue;
   try {
     const response = await request("/api/settings", jsonRequest("PUT", { [key]: value }));
     if (!response.ok) throw new Error("Could not save this preference.");
-    settings = await response.json(); applyAppearance();
-    if (key === "range") { currentRange = settings.range; $$$("#range-controls button").forEach(button => button.classList.toggle("selected", button.dataset.range === currentRange)); if (selected) loadChart(selected.symbol, currentRange, settings.sma); }
+    settings = await response.json(); syncControls(); applyAppearance();
+    if (key === "range" && settings.range !== currentRange) changeRange(settings.range);
     if (key === "sma" && selected) loadChart(selected.symbol, currentRange, settings.sma);
-    if (key === "heat") drawHeatmaps();
     if (key === "refresh") scheduleRefresh();
-  } catch (error) { toast(error.message, "error"); }
+  } catch (error) { if (error.message !== "Your session has expired.") toast(error.message, "error"); }
 }
 async function loadUsers() {
   const response = await request("/api/users");
@@ -264,16 +272,13 @@ function bindEvents() {
   });
   document.addEventListener("keydown", event => {
     if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") { event.preventDefault(); $("#search").focus(); }
-    if (event.key === "Enter" && event.target.matches("[data-symbol]")) event.target.click();
-    if (event.key === "Enter" && event.target.matches("[data-group]")) event.target.click();
+    if ((event.key === "Enter" || event.key === " ") && event.target.matches('[role="button"]')) { event.preventDefault(); event.target.click(); }
   });
   $("#search").addEventListener("input", () => { clearTimeout(searchTimer); searchTimer = setTimeout(runSearch, 280); });
   $("#search").addEventListener("focus", () => { if ($("#search").value.trim().length >= 2) runSearch(); });
   document.addEventListener("click", event => { if (!event.target.closest(".search-wrap")) $("#search-results").hidden = true; });
   $("#settings-open").addEventListener("click", async () => {
-    $$("[data-setting]").forEach(input => input.value = settings[input.dataset.setting]);
-    $("#account-name").textContent = $("#account-name").dataset.name || "—";
-    $("#settings-dialog").showModal();
+    syncControls(); $("#settings-dialog").showModal();
     if (isAdmin) await loadUsers();
   });
   $$("[data-setting]").forEach(input => input.addEventListener("change", () => saveSetting(input.dataset.setting, input.value)));
@@ -315,15 +320,11 @@ function bindEvents() {
   });
   $("#range-controls").addEventListener("click", event => {
     const button = event.target.closest("[data-range]"); if (!button) return;
-    currentRange = button.dataset.range;
-    $$("#range-controls button").forEach(item => item.classList.toggle("selected", item === button));
-    saveSetting("range", currentRange);
+    changeRange(button.dataset.range); saveSetting("range", currentRange);
   });
   $("#chart-sma").addEventListener("change", event => saveSetting("sma", event.target.value));
   $("#chart-fullscreen").addEventListener("click", fullscreenChart);
   $("#heat-scale").addEventListener("change", event => saveSetting("heat", event.target.value));
-  $("#full-heat").addEventListener("click", event => { const tile = event.target.closest("[data-symbol]"); if (tile) selectAsset(tile.dataset.symbol); });
-  $("#overview-heat").addEventListener("click", event => { const tile = event.target.closest("[data-symbol]"); if (tile) selectAsset(tile.dataset.symbol); });
   window.addEventListener("resize", () => { if (document.querySelector("#view-heat.active")) drawFullHeat(); });
   matchMedia("(prefers-color-scheme: light)").addEventListener?.("change", () => { if (settings.theme === "auto") applyAppearance(); });
 }
@@ -338,8 +339,7 @@ async function init() {
     $("#admin-panel").hidden = !isAdmin;
     currentRange = settings.range || "1Y";
     $$("#range-controls button").forEach(button => button.classList.toggle("selected", button.dataset.range === currentRange));
-    $("#chart-sma").value = String(settings.sma ?? 50);
-    $("#heat-scale").value = String(settings.heat ?? 3);
+    syncControls();
     applyAppearance(); createChart();
     await refreshPrices(); setView("overview"); scheduleRefresh();
   } catch (error) { if (error.message !== "Your session has expired.") toast(error.message, "error"); }
