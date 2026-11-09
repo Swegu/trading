@@ -4,36 +4,33 @@ A self-hosted market tracker for personal watchlists, price monitoring, candlest
 
 Market data is provided by Yahoo Finance through yfinance. Quotes may be delayed and availability is not guaranteed. This project is for personal market monitoring, not trade execution or financial advice.
 
-## Start with Docker
+## Docker Compose deployment (no Git required on the server)
 
-For a fresh installation, clone the feature branch and start the stack:
+Create a folder on your Docker host, save the repository's \`docker-compose.yml\` in that folder, and start it:
 
-    git clone -b feature/market-tracker-redesign-postgres https://github.com/Swegu/trading.git
-    cd trading
-    docker compose up -d --build
+    docker compose up -d
 
-For an existing checkout, switch to the feature branch once, then future updates are just pull and start:
+Docker pulls the prebuilt Markets image from GitHub Container Registry and the official PostgreSQL image. It does not clone the source repository or build the application on your server.
 
-    git fetch origin
-    git checkout feature/market-tracker-redesign-postgres
-    git pull
-    docker compose up -d --build
+Open http://YOUR-SERVER-IP:8000. On first launch, the login page guides you through creating the first administrator account.
 
-Open http://YOUR-SERVER-IP:8000. On first launch, the login page guides you through creating the first administrator account. No separate database installation, SQL commands, migrations or setup scripts are required.
+The default published port is 8000. Change it in the Compose file by changing \`8000:8000\` to your preferred host port.
 
-The default published port is 8000. Change it by setting MARKETS_PORT in a .env file.
+### First-run configuration
 
-## PostgreSQL and data
+Before the first start, replace \`replace-this-with-a-long-random-password\` in both places in the Compose file with the same long random password. Keep the value unchanged after PostgreSQL has initialized its data volume.
 
-Docker Compose starts both the Markets application and PostgreSQL. PostgreSQL is not published to the host; it is accessible only on the private Compose network.
+### Persistent data
 
-- PostgreSQL data is stored in the named Docker volume markets_postgres.
-- Application files and the session signing key are stored in ./data.
-- Existing installations with ./data/app.db are automatically imported into PostgreSQL on first startup. Users, password hashes, admin status, watchlists and settings are preserved.
-- The original SQLite file is left in place as a backup. Do not delete ./data until you have verified the migrated installation.
-- Back up both the markets_postgres Docker volume and the ./data directory.
+- PostgreSQL data is stored in the named Docker volume \`markets_postgres\`.
+- Application data and the session signing key are stored in the named Docker volume \`markets_data\`.
+- The database is not published to the host; it is accessible only on the private Compose network.
+- Back up both named volumes.
 
-For a custom database password, create .env before the first start using .env.example as a template. Use a long alphanumeric or hexadecimal value. The database password must remain the same after the PostgreSQL volume has been initialized.
+For updates, use:
+
+    docker compose pull
+    docker compose up -d
 
 Useful commands:
 
@@ -41,11 +38,11 @@ Useful commands:
     docker compose logs -f postgres
     docker compose down
 
-docker compose down preserves the database volume. Do not use docker compose down -v unless you intend to delete the PostgreSQL database.
+\`docker compose down\` preserves named volumes. Do not use \`docker compose down -v\` unless you intend to delete the application data and PostgreSQL database.
 
 ## Reverse proxy
 
-The application listens on port 8000 by default. Point your reverse proxy to the host LAN address and this port.
+Point your reverse proxy to the Docker host's LAN address and the published application port.
 
 Example Caddy site:
 
@@ -53,7 +50,7 @@ Example Caddy site:
         reverse_proxy YOUR-SERVER-LAN-IP:8000
     }
 
-Forward the X-Forwarded-Proto: https header so secure session cookies are enabled behind HTTPS.
+Forward the \`X-Forwarded-Proto: https\` header so secure session cookies are enabled behind HTTPS.
 
 ## Features
 
@@ -63,14 +60,7 @@ Forward the X-Forwarded-Proto: https header so secure session cookies are enable
 - Watchlist heatmaps
 - Four selectable visual styles, dark/light mode and density preferences
 - Responsive desktop and mobile interface
-- PostgreSQL persistence with automatic SQLite user-data migration
-
-Shell administration fallback (run inside the app container):
-
-    docker exec -it markets python manage.py list
-    docker exec -it markets python manage.py add USERNAME
-    docker exec -it markets python manage.py passwd USERNAME
-    docker exec -it markets python manage.py delete USERNAME
+- PostgreSQL persistence
 
 ## Notes
 

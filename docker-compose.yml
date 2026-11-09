@@ -6,7 +6,7 @@ services:
     environment:
       POSTGRES_DB: markets
       POSTGRES_USER: markets
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-markets-local-change-this}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-replace-this-with-a-long-random-password}
     volumes:
       - markets_postgres:/var/lib/postgresql/data
     healthcheck:
@@ -25,7 +25,7 @@ services:
       postgres:
         condition: service_healthy
     environment:
-      DATABASE_URL: postgresql://markets:${POSTGRES_PASSWORD:-markets-local-change-this}@postgres:5432/markets
+      DATABASE_URL: postgresql://markets:${POSTGRES_PASSWORD:-replace-this-with-a-long-random-password}@postgres:5432/markets
       DATA_DIR: /data
     volumes:
       - ./data:/data
